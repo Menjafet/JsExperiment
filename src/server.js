@@ -10,16 +10,28 @@ function markdownToPPT(markdown) {
 
   // Split the markdown into lines
   const lines = markdown.split('\n');
+  let slide = ppt.addSlide();
+  
+  //let the position slide
+  let position=0.00
 
   // Iterate through each line
   for (const line of lines) {
-    // Add a new slide to the presentation
-    const slide = ppt.addSlide();
-
-    //when finds a -------- iterates
     
+    
+    if (line==="---") {
+      position=0.15
+      // Add a new slide to the presentation
+      slide = ppt.addSlide();  
+      continue;
+    }  
+
+    /// be aware of the start and beguining of  ` and ``` style wrapper
+
+    const tagType= getMarkdownTag(line)
     // Add the line of markdown as text to the slide
-    slide.addText(line);
+    slide.addText(line,getTagStyle(tagType,position));
+    position+=0.25
   }
   console.log("AAAAAAAAAAAAAH")
   // Download the PowerPoint presentation
@@ -61,13 +73,15 @@ h1 {
 
 # Hello, Marpit!
 
-Marpit is the skinny framework for creating slide deck from Markdown.
+ Marpit is the skinny framework for creating slide deck from Markdown.
 
 ---
 
 ## Ready to convert into PDF!
 
 You can convert into PDF slide deck through Chrome.
+---
+- Revenue was off the chart.
 
 `
  
@@ -81,9 +95,138 @@ You can convert into PDF slide deck through Chrome.
   ${html}
 </body></html>
 `
-markdownToPPT(markdown)
-//fs.writeFileSync('example.html', htmlFile.trim())
+markdownToPPT(markdown) 
   res.send(htmlFile.trim()) // this sends the mesage
 })
 
 app.listen(3000)
+
+
+
+//#region OPTIONS STYLES
+
+function getMarkdownTag(line) {
+  switch (true) {
+    case line.startsWith("#"):
+      return "heading";
+    case line.startsWith("##"):
+      return "heading2";
+    case line.startsWith("###"):
+      return "heading3";
+    case line.startsWith("####"):
+      return "heading4";
+    case line.startsWith("#####"):
+      return "heading5";
+    case line.startsWith("######"):
+      return "heading6";
+    case line.startsWith("*"):
+      return "list item";
+    case line.startsWith("`"):
+      return "code block";
+    case line.startsWith("```"):
+      return "code block";
+    case line.startsWith("["):
+      return "link";
+    case line.startsWith("-"):
+      return "bullet point";
+    case line.startsWith("!["):
+      return "image";
+    default:
+      return "none";
+  }
+}
+
+function getTagStyle(tag, position) {
+
+  switch (tag) {
+    case "heading":
+      return {
+        x: 0.0,
+        y: position,
+        w: '100%',
+        h: 0.5,
+        align: 'center',
+        fontSize: 55,
+        color: '000000'
+      };
+    case "heading2":
+      return {
+        x: 0.0,
+        y: position,
+        w: '100%',
+        h: 0.5,
+        align: 'center',
+        fontSize: 50,
+        color: '000000'
+      };
+    case "heading3":
+      return {
+        x: 0.0,
+        y: position,
+        w: '100%',
+        h: 0.5,
+        align: 'center',
+        fontSize: 45,
+        color: '000000'
+      };
+    case "heading4":
+      return {
+        x: 0.0,
+        y: position,
+        w: '100%',
+        h: 0.5,
+        align: 'center',
+        fontSize: 40,
+        color: '000000'
+      };
+    case "heading5":
+      return {
+        x: 0.0,
+        y: position,
+        w: '100%',
+        h: 0.5,
+        align: 'center',
+        fontSize: 35,
+        color: '000000'
+      };
+    case "heading6":
+      return {
+        x: 0.0,
+        y: position,
+        w: '100%',
+        h: 0.5,
+        align: 'center',
+        fontSize: 30,
+        color: '000000'
+      };
+      case "bullet point":
+        return {
+          x: 0.0,
+          y: position,
+          w: '100%',
+          h: 0.5,
+          align: 'center',
+          fontSize: 30,
+          color: '000000',
+          bullet: true
+        };
+    default:
+      //normal
+      return {
+        x: 0.0,
+        y: position,
+        w: '100%',
+        h: 1.5,
+        align: 'center',
+        fontSize: 25,
+        color: '000000'
+      };
+  }
+}
+
+function trimMarkdownTag(tag) {
+
+}
+
+//#endregion  
+
